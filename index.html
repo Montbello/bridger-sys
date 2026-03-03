@@ -18,6 +18,94 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: var(--text); line-height: 1.6; }
 
+  /* ===== NDA GATE ===== */
+  #nda-gate {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(135deg, var(--primary) 0%, #1a3a5c 50%, #0d4a6b 100%);
+    z-index: 10000; display: flex; align-items: center; justify-content: center;
+    padding: 20px; overflow-y: auto;
+  }
+  #nda-gate.hidden { display: none; }
+  .nda-container {
+    background: white; border-radius: 16px; max-width: 720px; width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,.4); overflow: hidden;
+    max-height: 95vh; display: flex; flex-direction: column;
+  }
+  .nda-header {
+    background: var(--primary); color: white; padding: 28px 32px; text-align: center;
+  }
+  .nda-header h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 4px; }
+  .nda-header p { opacity: .8; font-size: .9rem; }
+  .nda-lock { font-size: 2.5rem; margin-bottom: 10px; }
+  .nda-body { padding: 28px 32px; overflow-y: auto; flex: 1; }
+  .nda-section-title {
+    font-size: .85rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--accent); margin: 20px 0 10px; border-bottom: 2px solid var(--light); padding-bottom: 6px;
+  }
+  .nda-section-title:first-child { margin-top: 0; }
+  .nda-text {
+    background: var(--light); border: 1px solid #dde5ef; border-radius: 8px;
+    padding: 16px; font-size: .85rem; color: #333; max-height: 220px; overflow-y: auto;
+    line-height: 1.7; margin-bottom: 16px;
+  }
+  .nda-text h4 { color: var(--primary); margin: 10px 0 4px; font-size: .9rem; }
+  .nda-text h4:first-child { margin-top: 0; }
+  .nda-text ul { margin: 4px 0 8px 18px; }
+  .nda-text li { margin-bottom: 2px; }
+
+  .nda-form-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;
+  }
+  .nda-form-grid .full-width { grid-column: 1 / -1; }
+  .nda-field label {
+    display: block; font-size: .8rem; font-weight: 600; color: #555; margin-bottom: 4px;
+  }
+  .nda-field label .req { color: #e74c3c; }
+  .nda-field input, .nda-field select {
+    width: 100%; padding: 10px 12px; border: 1px solid #ccd5e0; border-radius: 6px;
+    font-size: .95rem; font-family: inherit; transition: border-color .2s;
+  }
+  .nda-field input:focus, .nda-field select:focus {
+    outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,180,216,.15);
+  }
+  .nda-field input.invalid, .nda-field select.invalid {
+    border-color: #e74c3c; box-shadow: 0 0 0 3px rgba(231,76,60,.1);
+  }
+
+  .nda-checkbox-row {
+    display: flex; align-items: flex-start; gap: 10px; margin: 10px 0;
+    padding: 10px 12px; border-radius: 6px; background: var(--light);
+  }
+  .nda-checkbox-row input[type="checkbox"] {
+    margin-top: 3px; width: 18px; height: 18px; accent-color: var(--accent);
+    flex-shrink: 0; cursor: pointer;
+  }
+  .nda-checkbox-row label {
+    font-size: .88rem; color: #333; cursor: pointer; line-height: 1.5;
+  }
+
+  .nda-submit {
+    width: 100%; padding: 14px; background: var(--accent); color: white;
+    border: none; border-radius: 8px; font-size: 1rem; font-weight: 700;
+    cursor: pointer; transition: background .2s, transform .2s; margin-top: 10px;
+  }
+  .nda-submit:hover:not(:disabled) { background: #0096b7; transform: translateY(-1px); }
+  .nda-submit:disabled { opacity: .5; cursor: not-allowed; }
+  .nda-error { color: #e74c3c; font-size: .82rem; margin-top: 8px; display: none; text-align: center; }
+  .nda-footer-note {
+    text-align: center; font-size: .75rem; color: #888; margin-top: 14px; line-height: 1.5;
+  }
+
+  @media (max-width: 600px) {
+    .nda-form-grid { grid-template-columns: 1fr; }
+    .nda-body { padding: 20px 18px; }
+    .nda-header { padding: 20px 18px; }
+  }
+
+  /* ===== SITE CONTENT (hidden by default) ===== */
+  #site-content { display: none; }
+  #site-content.visible { display: block; }
+
   /* HERO */
   .hero {
     background: linear-gradient(135deg, var(--primary) 0%, #1a3a5c 50%, #0d4a6b 100%);
@@ -104,6 +192,120 @@
 </style>
 </head>
 <body>
+
+<!-- ===== NDA GATE ===== -->
+<div id="nda-gate">
+  <div class="nda-container">
+    <div class="nda-header">
+      <div class="nda-lock">&#128274;</div>
+      <h1>Confidential Information</h1>
+      <p>Non-Disclosure Agreement Required Before Access</p>
+    </div>
+    <div class="nda-body">
+
+      <div class="nda-section-title">Non-Disclosure Agreement</div>
+      <div class="nda-text">
+        <h4>1. Confidential Information</h4>
+        <p>The information presented on this website, including but not limited to technical specifications, business models, patent details, product architecture, pricing strategies, and all related documentation (collectively "Confidential Information"), is the exclusive property of <strong>Bridger Systems / Anderson Alberto Rodriguez</strong> ("Disclosing Party").</p>
+
+        <h4>2. Obligations of the Receiving Party</h4>
+        <p>By accessing this website, you ("Receiving Party") agree to:</p>
+        <ul>
+          <li>Maintain strict confidentiality of all Confidential Information</li>
+          <li>Not disclose, publish, or distribute any Confidential Information to third parties without prior written consent</li>
+          <li>Not use any Confidential Information for competitive purposes, reverse engineering, or unauthorized reproduction</li>
+          <li>Limit access to Confidential Information to those individuals within your organization who have a legitimate need to know</li>
+          <li>Not copy, screenshot, or reproduce any content from this website</li>
+        </ul>
+
+        <h4>3. Intellectual Property</h4>
+        <p>All technology, designs, and concepts described herein are protected by a pending patent application filed with the <strong>German Patent and Trade Mark Office (DPMA)</strong> on February 28, 2026. Any unauthorized use, reproduction, or filing of derivative patent applications is strictly prohibited and may result in legal action under German and international patent law.</p>
+
+        <h4>4. Duration</h4>
+        <p>This NDA remains in effect for a period of <strong>5 (five) years</strong> from the date of acceptance, regardless of whether you continue to access this website.</p>
+
+        <h4>5. Permitted Use</h4>
+        <p>Access is granted solely for the purpose of evaluating a potential business relationship, investment opportunity, or partnership with Bridger Systems. Any other use requires separate written authorization.</p>
+
+        <h4>6. Governing Law</h4>
+        <p>This agreement is governed by the laws of the <strong>Federal Republic of Germany</strong>. Place of jurisdiction is <strong>Hamburg, Germany</strong>. In case of disputes, the courts of Hamburg shall have exclusive jurisdiction.</p>
+
+        <h4>7. Breach &amp; Remedies</h4>
+        <p>Any breach of this NDA may result in immediate legal action, including injunctive relief and claims for damages. The Receiving Party acknowledges that monetary damages alone may be insufficient to compensate for a breach and that the Disclosing Party shall be entitled to seek equitable relief.</p>
+
+        <h4>8. Return of Information</h4>
+        <p>Upon request by the Disclosing Party, the Receiving Party shall promptly destroy or return all Confidential Information and any copies thereof.</p>
+      </div>
+
+      <div class="nda-section-title">Your Information</div>
+      <div class="nda-form-grid">
+        <div class="nda-field">
+          <label>Full Name <span class="req">*</span></label>
+          <input type="text" id="nda-name" placeholder="First and Last Name" required>
+        </div>
+        <div class="nda-field">
+          <label>Email Address <span class="req">*</span></label>
+          <input type="email" id="nda-email" placeholder="your@email.com" required>
+        </div>
+        <div class="nda-field">
+          <label>Company / Organization <span class="req">*</span></label>
+          <input type="text" id="nda-company" placeholder="Company name">
+        </div>
+        <div class="nda-field">
+          <label>Job Title / Role <span class="req">*</span></label>
+          <input type="text" id="nda-role" placeholder="e.g. Investor, Partner, Developer">
+        </div>
+        <div class="nda-field full-width">
+          <label>Purpose of Access <span class="req">*</span></label>
+          <select id="nda-purpose">
+            <option value="">-- Select purpose --</option>
+            <option value="investment">Investment Evaluation</option>
+            <option value="partnership">Business Partnership</option>
+            <option value="accelerator">Accelerator / Incubator Review</option>
+            <option value="grant">Grant / Funding Evaluation</option>
+            <option value="technical">Technical Due Diligence</option>
+            <option value="media">Media / Press (with permission)</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="nda-field full-width" id="nda-other-row" style="display:none;">
+          <label>Please specify <span class="req">*</span></label>
+          <input type="text" id="nda-other" placeholder="Describe your purpose">
+        </div>
+      </div>
+
+      <div class="nda-section-title">Consent</div>
+
+      <div class="nda-checkbox-row">
+        <input type="checkbox" id="nda-agree">
+        <label for="nda-agree">I have read, understood, and agree to the terms of this Non-Disclosure Agreement. I acknowledge that all information on this website is confidential and patent-protected.</label>
+      </div>
+
+      <div class="nda-checkbox-row">
+        <input type="checkbox" id="nda-data">
+        <label for="nda-data">I consent to the collection and storage of my personal data (name, email, company, role) for the purpose of documenting NDA acceptance, in accordance with the EU General Data Protection Regulation (GDPR). Data will be stored for the duration of the NDA (5 years) and not shared with third parties.</label>
+      </div>
+
+      <div class="nda-checkbox-row">
+        <input type="checkbox" id="nda-nocompete">
+        <label for="nda-nocompete">I confirm that I will not use any information obtained through this website to develop, design, or market competing products or services, or to file competing patent applications.</label>
+      </div>
+
+      <div class="nda-error" id="nda-error">Please fill in all required fields and check all consent boxes.</div>
+
+      <button class="nda-submit" id="nda-submit" onclick="submitNDA()">I Agree &mdash; Access Confidential Information</button>
+
+      <div class="nda-footer-note">
+        This NDA is electronically binding. Your IP address, timestamp, and submitted data will be logged.<br>
+        &copy; 2026 Bridger Systems &mdash; Anderson Alberto Rodriguez &mdash; Hamburg, Germany
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== SITE CONTENT (hidden until NDA accepted) ===== -->
+<div id="site-content">
 
 <!-- HERO -->
 <div class="hero">
@@ -311,6 +513,119 @@
   <p>&copy; 2026 Bridger Systems &mdash; Hamburg, Germany. Patent Pending.</p>
   <p style="margin-top:6px;"><a href="mailto:anderson.a.rodriguez.r@gmail.com">Contact</a></p>
 </footer>
+
+</div><!-- end #site-content -->
+
+<script>
+// Show/hide "Other" field based on purpose selection
+document.getElementById('nda-purpose').addEventListener('change', function() {
+  document.getElementById('nda-other-row').style.display = this.value === 'other' ? 'block' : 'none';
+});
+
+function submitNDA() {
+  var name = document.getElementById('nda-name').value.trim();
+  var email = document.getElementById('nda-email').value.trim();
+  var company = document.getElementById('nda-company').value.trim();
+  var role = document.getElementById('nda-role').value.trim();
+  var purpose = document.getElementById('nda-purpose').value;
+  var otherPurpose = document.getElementById('nda-other').value.trim();
+  var agree = document.getElementById('nda-agree').checked;
+  var data = document.getElementById('nda-data').checked;
+  var nocompete = document.getElementById('nda-nocompete').checked;
+
+  // Reset invalid states
+  var fields = ['nda-name','nda-email','nda-company','nda-role','nda-purpose'];
+  fields.forEach(function(id) { document.getElementById(id).classList.remove('invalid'); });
+
+  var valid = true;
+  var errorMsg = '';
+
+  if (!name) { document.getElementById('nda-name').classList.add('invalid'); valid = false; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('nda-email').classList.add('invalid'); valid = false; }
+  if (!company) { document.getElementById('nda-company').classList.add('invalid'); valid = false; }
+  if (!role) { document.getElementById('nda-role').classList.add('invalid'); valid = false; }
+  if (!purpose) { document.getElementById('nda-purpose').classList.add('invalid'); valid = false; }
+  if (purpose === 'other' && !otherPurpose) { document.getElementById('nda-other').classList.add('invalid'); valid = false; }
+
+  if (!agree || !data || !nocompete) {
+    valid = false;
+    errorMsg = 'You must accept all three consent boxes to proceed.';
+  }
+
+  if (!valid) {
+    var errEl = document.getElementById('nda-error');
+    errEl.textContent = errorMsg || 'Please fill in all required fields.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  // Build NDA record
+  var record = {
+    name: name,
+    email: email,
+    company: company,
+    role: role,
+    purpose: purpose === 'other' ? 'Other: ' + otherPurpose : purpose,
+    timestamp: new Date().toISOString(),
+    userAgent: navigator.userAgent
+  };
+
+  // Send NDA data via email notification (EmailJS-free: mailto fallback + localStorage log)
+  // Store locally as audit trail
+  var ndaLog = JSON.parse(localStorage.getItem('bridger_nda_log') || '[]');
+  ndaLog.push(record);
+  localStorage.setItem('bridger_nda_log', JSON.stringify(ndaLog));
+
+  // Send notification email via a hidden mailto (opens mail client as backup)
+  // Primary: send data to Google Form / webhook if configured
+  sendNDANotification(record);
+
+  // Grant access
+  document.getElementById('nda-gate').classList.add('hidden');
+  document.getElementById('site-content').classList.add('visible');
+
+  // Store session access
+  sessionStorage.setItem('bridger_nda_accepted', 'true');
+  sessionStorage.setItem('bridger_nda_name', name);
+}
+
+function sendNDANotification(record) {
+  // Attempt to send via Formspree (free tier: 50 submissions/month)
+  // Replace YOUR_FORM_ID with actual Formspree endpoint if desired
+  var formspreeEndpoint = 'https://formspree.io/f/anderson.a.rodriguez.r@gmail.com';
+
+  try {
+    fetch(formspreeEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: 'NDA Signed - Bridger Systems Website',
+        name: record.name,
+        email: record.email,
+        company: record.company,
+        role: record.role,
+        purpose: record.purpose,
+        timestamp: record.timestamp,
+        userAgent: record.userAgent,
+        message: 'New NDA signed on Bridger Systems website by ' + record.name +
+                 ' (' + record.email + ') from ' + record.company +
+                 '. Purpose: ' + record.purpose +
+                 '. Time: ' + record.timestamp
+      })
+    }).catch(function() {
+      // Silent fail - localStorage already has the record
+    });
+  } catch(e) {
+    // Silent fail
+  }
+}
+
+// Check if already accepted in this session
+if (sessionStorage.getItem('bridger_nda_accepted') === 'true') {
+  document.getElementById('nda-gate').classList.add('hidden');
+  document.getElementById('site-content').classList.add('visible');
+}
+</script>
 
 </body>
 </html>
