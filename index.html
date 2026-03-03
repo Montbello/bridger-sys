@@ -659,6 +659,7 @@ var VALID_KEYS = [
   { key: 'BRG-PART02-2026A', expires: '2026-06-01', label: 'Partner 2' },
   { key: 'BRG-DEMO-2026', expires: '2026-12-31', label: 'Demo / Owner' },
   { key: 'BRG-ADMIN-MASTER', expires: '2027-12-31', label: 'Admin' },
+  { key: 'BRG-OWNER-BYPASS', expires: '2028-12-31', label: 'Owner (No NDA)', admin: true },
 ];
 
 var urlParams = new URLSearchParams(window.location.search);
@@ -702,6 +703,15 @@ var keyInfo = validateKey(accessKey);
 if (!keyInfo) {
   document.getElementById('access-denied').classList.remove('hidden');
   document.getElementById('nda-gate').classList.add('hidden');
+} else if (keyInfo.admin) {
+  // ADMIN BYPASS — skip NDA entirely
+  sessionStorage.setItem('bridger_access_key', accessKey);
+  document.getElementById('nda-gate').classList.add('hidden');
+  document.getElementById('access-denied').classList.add('hidden');
+  document.getElementById('site-content').classList.add('visible');
+  document.getElementById('viewer-name').textContent = 'Admin (Owner)';
+  document.getElementById('viewer-key').textContent = 'Key: OWNER-BYPASS';
+  prefillTechRequest({ name: 'Anderson Rodriguez', email: 'consulting.arod@gmail.com', company: 'Bridger Systems' });
 } else {
   sessionStorage.setItem('bridger_access_key', accessKey);
   localStorage.setItem('bridger_key_' + accessKey, getFingerprint());
