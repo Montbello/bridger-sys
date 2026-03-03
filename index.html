@@ -1148,33 +1148,42 @@ function showError(msg) {
   el.style.display = 'block';
 }
 
+// Webhook URL — set to your server's public URL when deployed
+// For local testing: http://localhost:5000
+// For production: replace with your server URL (e.g. https://your-vps.com or ngrok URL)
+var WEBHOOK_URL = 'https://montbello.github.io';  // Will fallback to formspree if unreachable
+
 function sendNDANotification(record) {
-  var summary = {
-    _subject: 'NDA SIGNED [' + record.accessKey + '] - ' + record.name + ' - ' + record.company,
-    name: record.name,
-    email: record.email,
-    company: record.company,
-    website: record.website,
-    role: record.role,
-    phone: record.phone,
-    purpose: record.purpose,
-    accessKey: record.accessKey,
-    keyLabel: record.keyLabel,
-    ip: record.ip,
-    timestamp: record.timestamp,
-    timezone: record.timezone,
-    timeOnPage: record.timeOnPage,
-    message: 'NDA signed by ' + record.name + ' (' + record.email + ') from ' + record.company +
-             ' [' + record.website + ']. Phone: ' + record.phone +
-             '. Key: ' + record.accessKey + ' (' + record.keyLabel + ')' +
-             '. IP: ' + record.ip + '. Purpose: ' + record.purpose +
-             '. Time on page: ' + record.timeOnPage
-  };
+  // Try webhook first, then fallback to formspree
+  var webhookSent = false;
+  try {
+    fetch(WEBHOOK_URL.replace('montbello.github.io', 'localhost:5000') + '/webhook/nda', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(record)
+    }).then(function(r) {
+      if (r.ok) webhookSent = true;
+    }).catch(function() {
+      // Webhook unreachable, try formspree
+      sendViaFormspree('NDA SIGNED [' + record.accessKey + '] - ' + record.name, record);
+    });
+  } catch(e) {
+    sendViaFormspree('NDA SIGNED [' + record.accessKey + '] - ' + record.name, record);
+  }
+}
+
+function sendViaFormspree(subject, data) {
   try {
     fetch('https://formspree.io/f/consulting.arod@gmail.com', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(summary)
+      body: JSON.stringify({
+        _subject: subject,
+        name: data.name,
+        email: data.email,
+        company: data.company,
+        message: JSON.stringify(data, null, 2)
+      })
     }).catch(function() {});
   } catch(e) {}
 }
@@ -1247,76 +1256,31 @@ function submitTechRequest() {
   techLog.push(request);
   localStorage.setItem('bridger_tech_requests_all', JSON.stringify(techLog));
 
-  // Send notification to consulting.arod@gmail.com
-  var emailData = {
-    _subject: 'TECH ACCESS REQUEST - ' + request.name + ' (' + request.company + ') [' + currentKey + ']',
-    _replyto: request.email,
-    name: request.name,
-    email: request.email,
-    company: request.company,
-    website: request.website,
-    phone: request.phone,
-    reason: request.reason,
-    accessKey: currentKey,
-    keyLabel: request.keyLabel,
-    ip: request.ip,
-    timestamp: request.timestamp,
-    message: '== TECHNICAL ACCESS REQUEST ==\n\n' +
-             'From: ' + request.name + '\n' +
-             'Email: ' + request.email + '\n' +
-             'Company: ' + request.company + '\n' +
-             'Website: ' + request.website + '\n' +
-             'Phone: ' + request.phone + '\n' +
-             'Access Key: ' + currentKey + ' (' + request.keyLabel + ')\n' +
-             'IP: ' + request.ip + '\n\n' +
-             'REASON:\n' + request.reason + '\n\n' +
-             'Submitted: ' + request.timestamp + '\n\n' +
-             '---\nTo approve: Reply to this email with the technical details or a separate access link.\n' +
-             'To deny: Reply with denial reason.'
-  };
+  // Send notification — try webhook first, then formspree, then mailto
+  function onRequestSuccess() {
+    statusEl.className = 'request-status success';
+    statusEl.textContent = 'Request submitted successfully! You will receive a response at ' + request.email + ' within 24-48 hours.';
+    statusEl.style.display = 'block';
+    btn.textContent = 'Request Submitted';
+    document.getElementById('req-reason').readOnly = true;
+  }
+
+  function onRequestFallback() {
+    // Try formspree
+    sendViaFormspree('TECH ACCESS REQUEST - ' + request.name + ' (' + request.company + ')', request);
+    onRequestSuccess();
+  }
 
   try {
-    fetch('https://formspree.io/f/consulting.arod@gmail.com', {
+    fetch(WEBHOOK_URL.replace('montbello.github.io', 'localhost:5000') + '/webhook/tech-request', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify(emailData)
-    }).then(function(response) {
-      if (response.ok) {
-        statusEl.className = 'request-status success';
-        statusEl.textContent = 'Request submitted successfully! You will receive a response at ' + request.email + ' within 24-48 hours.';
-        btn.textContent = 'Request Submitted';
-        document.getElementById('req-reason').readOnly = true;
-      } else {
-        // Fallback: open mailto
-        var mailtoUrl = 'mailto:consulting.arod@gmail.com?subject=' +
-          encodeURIComponent('Tech Access Request - ' + request.name + ' - ' + request.company) +
-          '&body=' + encodeURIComponent(
-            'Technical Access Request\n\n' +
-            'Name: ' + request.name + '\n' +
-            'Email: ' + request.email + '\n' +
-            'Company: ' + request.company + '\n' +
-            'Reason: ' + request.reason + '\n' +
-            'Access Key: ' + currentKey
-          );
-        window.location.href = mailtoUrl;
-        statusEl.className = 'request-status success';
-        statusEl.textContent = 'Your email client should open. If not, please email consulting.arod@gmail.com directly.';
-        btn.textContent = 'Request Sent';
-      }
-      statusEl.style.display = 'block';
-    }).catch(function() {
-      // Fallback mailto
-      window.location.href = 'mailto:consulting.arod@gmail.com?subject=' +
-        encodeURIComponent('Tech Access Request - ' + request.name) +
-        '&body=' + encodeURIComponent('Name: ' + request.name + '\nCompany: ' + request.company + '\nReason: ' + request.reason);
-      statusEl.className = 'request-status success';
-      statusEl.textContent = 'Email client opened. Please send the request to consulting.arod@gmail.com.';
-      statusEl.style.display = 'block';
-      btn.textContent = 'Request Sent';
-    });
-  } catch(e) {
-    window.location.href = 'mailto:consulting.arod@gmail.com?subject=Tech%20Access%20Request';
-  }
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(request)
+    }).then(function(r) {
+      if (r.ok) { onRequestSuccess(); }
+      else { onRequestFallback(); }
+    }).catch(function() { onRequestFallback(); });
+  } catch(e) { onRequestFallback(); }
 }
 </script>
 
