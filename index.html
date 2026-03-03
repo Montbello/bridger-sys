@@ -18,11 +18,14 @@
     --light: #f0f6fc;
     --text: #1a1a2e;
     --danger: #e74c3c;
+    --warn-bg: #fff3cd;
+    --warn-border: #ffc107;
+    --warn-text: #856404;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: var(--text); line-height: 1.6; }
 
-  /* ===== ACCESS DENIED SCREEN ===== */
+  /* ACCESS DENIED */
   #access-denied {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
     background: linear-gradient(135deg, #1a1a2e 0%, #0f2b46 100%);
@@ -40,7 +43,7 @@
   }
   .denied-box .denied-contact a { color: var(--accent); text-decoration: none; }
 
-  /* ===== NDA GATE ===== */
+  /* NDA GATE */
   #nda-gate {
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
     background: linear-gradient(135deg, var(--primary) 0%, #1a3a5c 50%, #0d4a6b 100%);
@@ -49,31 +52,43 @@
   }
   #nda-gate.hidden { display: none; }
   .nda-container {
-    background: white; border-radius: 16px; max-width: 720px; width: 100%;
+    background: white; border-radius: 16px; max-width: 740px; width: 100%;
     box-shadow: 0 20px 60px rgba(0,0,0,.4); overflow: hidden;
     max-height: 95vh; display: flex; flex-direction: column;
   }
-  .nda-header {
-    background: var(--primary); color: white; padding: 28px 32px; text-align: center;
-  }
+  .nda-header { background: var(--primary); color: white; padding: 28px 32px; text-align: center; }
   .nda-header h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 4px; }
   .nda-header p { opacity: .8; font-size: .9rem; }
   .nda-lock { font-size: 2.5rem; margin-bottom: 10px; }
   .nda-body { padding: 28px 32px; overflow-y: auto; flex: 1; }
+
   .nda-section-title {
     font-size: .85rem; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 1px; color: var(--accent); margin: 20px 0 10px; border-bottom: 2px solid var(--light); padding-bottom: 6px;
+    letter-spacing: 1px; color: var(--accent); margin: 20px 0 10px;
+    border-bottom: 2px solid var(--light); padding-bottom: 6px;
   }
   .nda-section-title:first-child { margin-top: 0; }
+
   .nda-text {
     background: var(--light); border: 1px solid #dde5ef; border-radius: 8px;
-    padding: 16px; font-size: .85rem; color: #333; max-height: 220px; overflow-y: auto;
-    line-height: 1.7; margin-bottom: 16px;
+    padding: 16px; font-size: .85rem; color: #333; max-height: 240px; overflow-y: auto;
+    line-height: 1.7; margin-bottom: 6px;
   }
   .nda-text h4 { color: var(--primary); margin: 10px 0 4px; font-size: .9rem; }
   .nda-text h4:first-child { margin-top: 0; }
   .nda-text ul { margin: 4px 0 8px 18px; }
   .nda-text li { margin-bottom: 2px; }
+
+  .scroll-hint {
+    text-align: center; font-size: .78rem; color: var(--danger); font-weight: 600;
+    padding: 6px; margin-bottom: 14px; background: #ffeaea; border-radius: 4px;
+  }
+  .scroll-hint.done { background: #e6f9ee; color: #1a7a3a; }
+
+  .nda-warning {
+    background: var(--warn-bg); border: 1px solid var(--warn-border); border-radius: 6px;
+    padding: 10px 14px; font-size: .82rem; color: var(--warn-text); margin-bottom: 16px; text-align: center;
+  }
 
   .nda-form-grid {
     display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;
@@ -83,6 +98,8 @@
     display: block; font-size: .8rem; font-weight: 600; color: #555; margin-bottom: 4px;
   }
   .nda-field label .req { color: var(--danger); }
+  .nda-field .field-hint { font-size: .72rem; color: #888; margin-top: 2px; }
+  .nda-field .field-error { font-size: .72rem; color: var(--danger); margin-top: 2px; display: none; }
   .nda-field input, .nda-field select {
     width: 100%; padding: 10px 12px; border: 1px solid #ccd5e0; border-radius: 6px;
     font-size: .95rem; font-family: inherit; transition: border-color .2s;
@@ -93,17 +110,42 @@
   .nda-field input.invalid, .nda-field select.invalid {
     border-color: var(--danger); box-shadow: 0 0 0 3px rgba(231,76,60,.1);
   }
+  .nda-field input.valid {
+    border-color: var(--accent2); box-shadow: 0 0 0 3px rgba(0,230,167,.1);
+  }
+
+  /* Honeypot */
+  .nda-hp { position: absolute; left: -9999px; opacity: 0; height: 0; width: 0; }
 
   .nda-checkbox-row {
     display: flex; align-items: flex-start; gap: 10px; margin: 10px 0;
     padding: 10px 12px; border-radius: 6px; background: var(--light);
   }
+  .nda-checkbox-row.locked { opacity: .4; pointer-events: none; }
   .nda-checkbox-row input[type="checkbox"] {
     margin-top: 3px; width: 18px; height: 18px; accent-color: var(--accent);
     flex-shrink: 0; cursor: pointer;
   }
-  .nda-checkbox-row label {
-    font-size: .88rem; color: #333; cursor: pointer; line-height: 1.5;
+  .nda-checkbox-row label { font-size: .88rem; color: #333; cursor: pointer; line-height: 1.5; }
+
+  /* Signature Pad */
+  .sig-wrapper { margin: 14px 0; }
+  .sig-wrapper label { font-size: .8rem; font-weight: 600; color: #555; display: block; margin-bottom: 6px; }
+  .sig-canvas-box {
+    border: 2px solid #ccd5e0; border-radius: 8px; background: #fafbfc;
+    position: relative; overflow: hidden;
+  }
+  .sig-canvas-box.invalid { border-color: var(--danger); }
+  .sig-canvas-box canvas { display: block; cursor: crosshair; }
+  .sig-clear {
+    position: absolute; top: 6px; right: 8px; background: rgba(0,0,0,.06);
+    border: none; padding: 4px 10px; border-radius: 4px; font-size: .75rem;
+    cursor: pointer; color: #666;
+  }
+  .sig-clear:hover { background: rgba(0,0,0,.12); }
+  .sig-placeholder {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    color: #bbb; font-size: .85rem; pointer-events: none;
   }
 
   .nda-submit {
@@ -112,14 +154,20 @@
     cursor: pointer; transition: background .2s, transform .2s; margin-top: 10px;
   }
   .nda-submit:hover:not(:disabled) { background: #0096b7; transform: translateY(-1px); }
-  .nda-submit:disabled { opacity: .5; cursor: not-allowed; }
+  .nda-submit:disabled { opacity: .4; cursor: not-allowed; background: #aaa; }
   .nda-error { color: var(--danger); font-size: .82rem; margin-top: 8px; display: none; text-align: center; }
-  .nda-footer-note {
-    text-align: center; font-size: .75rem; color: #888; margin-top: 14px; line-height: 1.5;
+  .nda-footer-note { text-align: center; font-size: .75rem; color: #888; margin-top: 14px; line-height: 1.5; }
+
+  .timer-bar {
+    text-align: center; font-size: .78rem; color: #666; margin-bottom: 8px;
+    padding: 6px; background: var(--light); border-radius: 4px;
   }
-  .nda-warning {
-    background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px;
-    padding: 10px 14px; font-size: .82rem; color: #856404; margin-bottom: 16px; text-align: center;
+  .timer-bar .countdown { font-weight: 700; color: var(--primary); }
+
+  .attempts-warning {
+    background: #fde; border: 1px solid #e74c3c; border-radius: 6px;
+    padding: 10px; text-align: center; color: var(--danger); font-size: .82rem;
+    margin-top: 8px; display: none;
   }
 
   @media (max-width: 600px) {
@@ -128,15 +176,13 @@
     .nda-header { padding: 20px 18px; }
   }
 
-  /* ===== SITE CONTENT (hidden by default) ===== */
+  /* SITE CONTENT */
   #site-content { display: none; }
   #site-content.visible { display: block; }
 
-  /* HERO */
   .hero {
     background: linear-gradient(135deg, var(--primary) 0%, #1a3a5c 50%, #0d4a6b 100%);
-    color: white; padding: 80px 20px 60px; text-align: center;
-    position: relative; overflow: hidden;
+    color: white; padding: 80px 20px 60px; text-align: center; position: relative; overflow: hidden;
   }
   .hero::before {
     content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
@@ -146,53 +192,34 @@
   .hero-content { position: relative; max-width: 900px; margin: 0 auto; }
   .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; margin-bottom: 10px; letter-spacing: -1px; }
   .hero .tagline { font-size: clamp(1rem, 2.5vw, 1.3rem); opacity: .85; margin-bottom: 30px; }
-  .badge { display: inline-block; background: rgba(0,230,167,.15); border: 1px solid rgba(0,230,167,.4);
-    color: var(--accent2); padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; margin: 5px; }
-  .hero-cta { display: inline-block; background: var(--accent); color: white; padding: 14px 36px;
-    border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 16px; margin-top: 20px;
-    transition: transform .2s, box-shadow .2s; }
+  .badge { display: inline-block; background: rgba(0,230,167,.15); border: 1px solid rgba(0,230,167,.4); color: var(--accent2); padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; margin: 5px; }
+  .hero-cta { display: inline-block; background: var(--accent); color: white; padding: 14px 36px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 16px; margin-top: 20px; transition: transform .2s, box-shadow .2s; }
   .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,180,216,.3); }
 
-  /* SECTIONS */
   section { padding: 60px 20px; }
   .container { max-width: 1000px; margin: 0 auto; }
   h2 { font-size: 1.8rem; font-weight: 700; margin-bottom: 30px; color: var(--primary); }
   h2 span { color: var(--accent); }
 
-  /* FEATURES */
   .features { background: var(--light); }
   .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
-  .feature-card {
-    background: white; padding: 28px; border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0,0,0,.06); border: 1px solid #e8eff6;
-    transition: transform .2s;
-  }
+  .feature-card { background: white; padding: 28px; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.06); border: 1px solid #e8eff6; transition: transform .2s; }
   .feature-card:hover { transform: translateY(-4px); }
   .feature-icon { font-size: 2rem; margin-bottom: 12px; }
   .feature-card h3 { font-size: 1.1rem; margin-bottom: 8px; color: var(--primary); }
   .feature-card p { font-size: .95rem; color: #555; }
 
-  /* LOCKED SECTION */
   .locked-section { background: white; }
-  .locked-box {
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef); border: 2px dashed #ced4da;
-    border-radius: 16px; padding: 50px 30px; text-align: center;
-  }
+  .locked-box { background: linear-gradient(135deg, #f8f9fa, #e9ecef); border: 2px dashed #ced4da; border-radius: 16px; padding: 50px 30px; text-align: center; }
   .locked-box .lock-icon { font-size: 3rem; margin-bottom: 16px; opacity: .5; }
   .locked-box h3 { color: var(--primary); font-size: 1.3rem; margin-bottom: 8px; }
   .locked-box p { color: #666; font-size: .95rem; max-width: 500px; margin: 0 auto 20px; }
-  .locked-box .request-btn {
-    display: inline-block; background: var(--primary); color: white; padding: 12px 28px;
-    border-radius: 8px; text-decoration: none; font-weight: 600; font-size: .95rem;
-    transition: transform .2s, box-shadow .2s;
-  }
+  .locked-box .request-btn { display: inline-block; background: var(--primary); color: white; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: .95rem; transition: transform .2s, box-shadow .2s; }
   .locked-box .request-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(15,43,70,.3); }
 
-  /* TIERS */
   .tiers { background: var(--light); }
   .tier-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
-  .tier-card { background: white; padding: 24px; border-radius: 12px; text-align: center;
-    border: 2px solid #e8eff6; transition: border-color .2s; }
+  .tier-card { background: white; padding: 24px; border-radius: 12px; text-align: center; border: 2px solid #e8eff6; transition: border-color .2s; }
   .tier-card:hover { border-color: var(--accent); }
   .tier-card h3 { color: var(--primary); margin-bottom: 8px; }
   .tier-card .tier-target { font-size: .85rem; color: var(--accent); font-weight: 600; margin-bottom: 12px; }
@@ -200,31 +227,22 @@
   .tier-card ul li { padding: 4px 0; }
   .tier-card ul li::before { content: '\2713'; color: var(--accent2); font-weight: 700; margin-right: 8px; }
 
-  /* PATENT */
   .patent { background: linear-gradient(135deg, var(--primary), #1a3a5c); color: white; text-align: center; }
   .patent h2 { color: white; }
   .patent-info { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 20px; }
-  .patent-item { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
-    padding: 16px 24px; border-radius: 10px; min-width: 180px; }
+  .patent-item { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); padding: 16px 24px; border-radius: 10px; min-width: 180px; }
   .patent-item .label { font-size: .8rem; opacity: .7; }
   .patent-item .value { font-size: 1.1rem; font-weight: 700; margin-top: 4px; }
 
-  /* CONTACT */
   .contact { background: white; text-align: center; }
   .contact-info { font-size: 1.05rem; margin-top: 16px; }
   .contact-info a { color: var(--accent); text-decoration: none; }
   .contact-info a:hover { text-decoration: underline; }
 
-  /* FOOTER */
-  footer { background: var(--primary); color: rgba(255,255,255,.6); text-align: center;
-    padding: 24px 20px; font-size: .85rem; }
+  footer { background: var(--primary); color: rgba(255,255,255,.6); text-align: center; padding: 24px 20px; font-size: .85rem; }
   footer a { color: var(--accent); text-decoration: none; }
 
-  /* ACCESS BAR */
-  .access-bar {
-    background: #1a1a2e; color: rgba(255,255,255,.6); text-align: center;
-    padding: 8px 16px; font-size: .75rem; position: sticky; top: 0; z-index: 100;
-  }
+  .access-bar { background: #1a1a2e; color: rgba(255,255,255,.6); text-align: center; padding: 8px 16px; font-size: .75rem; position: sticky; top: 0; z-index: 100; }
   .access-bar strong { color: var(--accent); }
 
   @media (max-width: 600px) {
@@ -235,7 +253,7 @@
 </head>
 <body>
 
-<!-- ===== ACCESS DENIED (no valid key) ===== -->
+<!-- ACCESS DENIED -->
 <div id="access-denied" class="hidden">
   <div class="denied-box">
     <div class="denied-icon">&#128683;</div>
@@ -250,7 +268,7 @@
   </div>
 </div>
 
-<!-- ===== NDA GATE ===== -->
+<!-- NDA GATE -->
 <div id="nda-gate" class="hidden">
   <div class="nda-container">
     <div class="nda-header">
@@ -261,11 +279,12 @@
     <div class="nda-body">
 
       <div class="nda-warning">
-        This link is personal and non-transferable. Sharing this link with unauthorized parties is a breach of the NDA and may result in legal consequences.
+        This link is personal and non-transferable. Sharing this link with unauthorized parties is a breach of the NDA and may result in legal consequences. All access is monitored and logged.
       </div>
 
-      <div class="nda-section-title">Non-Disclosure Agreement</div>
-      <div class="nda-text">
+      <!-- STEP 1: NDA TEXT (must scroll to bottom) -->
+      <div class="nda-section-title">1. Read the Non-Disclosure Agreement</div>
+      <div class="nda-text" id="nda-text-box">
         <h4>1. Confidential Information</h4>
         <p>The information presented on this website, including but not limited to technical specifications, business models, patent details, product architecture, pricing strategies, and all related documentation (collectively "Confidential Information"), is the exclusive property of <strong>Bridger Systems / Anderson Alberto Rodriguez</strong> ("Disclosing Party").</p>
 
@@ -292,97 +311,151 @@
         <h4>6. Permitted Use</h4>
         <p>Access is granted solely for the purpose of evaluating a potential business relationship, investment opportunity, or partnership with Bridger Systems. Any other use requires separate written authorization.</p>
 
-        <h4>7. Governing Law</h4>
+        <h4>7. Governing Law &amp; Jurisdiction</h4>
         <p>This agreement is governed by the laws of the <strong>Federal Republic of Germany</strong>. Place of jurisdiction is <strong>Hamburg, Germany</strong>. In case of disputes, the courts of Hamburg shall have exclusive jurisdiction.</p>
 
         <h4>8. Breach &amp; Remedies</h4>
-        <p>Any breach of this NDA may result in immediate legal action, including injunctive relief and claims for damages. The Receiving Party acknowledges that monetary damages alone may be insufficient to compensate for a breach and that the Disclosing Party shall be entitled to seek equitable relief.</p>
+        <p>Any breach of this NDA may result in immediate legal action, including injunctive relief and claims for damages up to <strong>EUR 500,000</strong> per breach. The Receiving Party acknowledges that monetary damages alone may be insufficient to compensate for a breach and that the Disclosing Party shall be entitled to seek equitable relief.</p>
 
-        <h4>9. Return of Information</h4>
-        <p>Upon request by the Disclosing Party, the Receiving Party shall promptly destroy or return all Confidential Information and any copies thereof.</p>
+        <h4>9. Contractual Penalty (Vertragsstrafe)</h4>
+        <p>In the event of a proven breach of confidentiality obligations, the Receiving Party agrees to pay a contractual penalty of <strong>EUR 50,000</strong> per incident, without prejudice to further claims for damages. This applies in particular to unauthorized forwarding of the access link and unauthorized disclosure of patent-related information.</p>
+
+        <h4>10. Return of Information</h4>
+        <p>Upon request by the Disclosing Party, the Receiving Party shall promptly destroy or return all Confidential Information and any copies thereof, and confirm such destruction in writing.</p>
+
+        <p style="margin-top:14px; padding-top:10px; border-top:1px solid #ddd; font-weight:600; text-align:center; color:var(--primary);">
+          &mdash; End of Non-Disclosure Agreement &mdash;
+        </p>
       </div>
+      <div class="scroll-hint" id="scroll-hint">You must scroll to the bottom of the NDA to continue.</div>
 
-      <div class="nda-section-title">Your Information</div>
-      <div class="nda-form-grid">
-        <div class="nda-field">
-          <label>Full Name <span class="req">*</span></label>
-          <input type="text" id="nda-name" placeholder="First and Last Name" required>
+      <!-- STEP 2: IDENTITY (locked until NDA scrolled) -->
+      <div id="form-section" style="opacity:.3; pointer-events:none; transition: opacity .3s;">
+
+        <div class="nda-section-title">2. Verify Your Identity</div>
+
+        <!-- Honeypot -->
+        <input type="text" name="website" id="nda-hp" class="nda-hp" tabindex="-1" autocomplete="off">
+
+        <div class="nda-form-grid">
+          <div class="nda-field">
+            <label>Full Legal Name <span class="req">*</span></label>
+            <input type="text" id="nda-name" placeholder="First and Last Name" autocomplete="name">
+            <div class="field-hint">Must match your business identity (min. 2 words)</div>
+            <div class="field-error" id="err-name"></div>
+          </div>
+          <div class="nda-field">
+            <label>Business Email <span class="req">*</span></label>
+            <input type="email" id="nda-email" placeholder="you@yourcompany.com" autocomplete="email">
+            <div class="field-hint">Company email required. Personal emails (Gmail, Yahoo, etc.) not accepted.</div>
+            <div class="field-error" id="err-email"></div>
+          </div>
+          <div class="nda-field">
+            <label>Company / Organization <span class="req">*</span></label>
+            <input type="text" id="nda-company" placeholder="Registered company name" autocomplete="organization">
+            <div class="field-hint">Legal entity name (min. 3 characters)</div>
+            <div class="field-error" id="err-company"></div>
+          </div>
+          <div class="nda-field">
+            <label>Company Website <span class="req">*</span></label>
+            <input type="url" id="nda-website" placeholder="https://yourcompany.com" autocomplete="url">
+            <div class="field-hint">Must match your email domain</div>
+            <div class="field-error" id="err-website"></div>
+          </div>
+          <div class="nda-field">
+            <label>Job Title / Role <span class="req">*</span></label>
+            <input type="text" id="nda-role" placeholder="e.g. Managing Director, Investment Analyst">
+            <div class="field-hint">Your official position (min. 3 characters)</div>
+            <div class="field-error" id="err-role"></div>
+          </div>
+          <div class="nda-field">
+            <label>Business Phone <span class="req">*</span></label>
+            <input type="tel" id="nda-phone" placeholder="+49 xxx xxxxxxxx" autocomplete="tel">
+            <div class="field-hint">International format with country code</div>
+            <div class="field-error" id="err-phone"></div>
+          </div>
+          <div class="nda-field full-width">
+            <label>Purpose of Access <span class="req">*</span></label>
+            <select id="nda-purpose">
+              <option value="">-- Select purpose --</option>
+              <option value="investment">Investment Evaluation</option>
+              <option value="partnership">Business Partnership</option>
+              <option value="accelerator">Accelerator / Incubator Review</option>
+              <option value="grant">Grant / Funding Evaluation</option>
+              <option value="technical">Technical Due Diligence</option>
+              <option value="media">Media / Press (with permission)</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="nda-field full-width" id="nda-other-row" style="display:none;">
+            <label>Please specify <span class="req">*</span></label>
+            <input type="text" id="nda-other" placeholder="Describe your purpose in detail (min. 20 characters)">
+            <div class="field-error" id="err-other"></div>
+          </div>
         </div>
-        <div class="nda-field">
-          <label>Email Address <span class="req">*</span></label>
-          <input type="email" id="nda-email" placeholder="your@email.com" required>
+
+        <!-- STEP 3: CONSENT -->
+        <div class="nda-section-title">3. Consent &amp; Acknowledgement</div>
+
+        <div class="nda-checkbox-row">
+          <input type="checkbox" id="nda-agree">
+          <label for="nda-agree">I have read, understood, and agree to the <strong>full terms</strong> of this Non-Disclosure Agreement, including the contractual penalty clause (EUR 50,000 per breach). I acknowledge that all information on this website is confidential and patent-protected.</label>
         </div>
-        <div class="nda-field">
-          <label>Company / Organization <span class="req">*</span></label>
-          <input type="text" id="nda-company" placeholder="Company name">
+
+        <div class="nda-checkbox-row">
+          <input type="checkbox" id="nda-noshare">
+          <label for="nda-noshare">I confirm that this access link was provided to me personally, I will <strong>NOT</strong> forward, share, or redistribute it, and I understand that unauthorized sharing triggers the contractual penalty.</label>
         </div>
-        <div class="nda-field">
-          <label>Job Title / Role <span class="req">*</span></label>
-          <input type="text" id="nda-role" placeholder="e.g. Investor, Partner, Developer">
+
+        <div class="nda-checkbox-row">
+          <input type="checkbox" id="nda-data">
+          <label for="nda-data">I consent to the collection and storage of my personal data (name, email, company, phone, IP address, signature) for the purpose of documenting NDA acceptance, in accordance with the EU GDPR. Data will be stored for the NDA duration (5 years).</label>
         </div>
-        <div class="nda-field full-width">
-          <label>Purpose of Access <span class="req">*</span></label>
-          <select id="nda-purpose">
-            <option value="">-- Select purpose --</option>
-            <option value="investment">Investment Evaluation</option>
-            <option value="partnership">Business Partnership</option>
-            <option value="accelerator">Accelerator / Incubator Review</option>
-            <option value="grant">Grant / Funding Evaluation</option>
-            <option value="technical">Technical Due Diligence</option>
-            <option value="media">Media / Press (with permission)</option>
-            <option value="other">Other</option>
-          </select>
+
+        <div class="nda-checkbox-row">
+          <input type="checkbox" id="nda-nocompete">
+          <label for="nda-nocompete">I confirm that I will not use any information obtained to develop, design, or market competing products, or to file competing patent applications. I accept liability for damages resulting from any breach.</label>
         </div>
-        <div class="nda-field full-width" id="nda-other-row" style="display:none;">
-          <label>Please specify <span class="req">*</span></label>
-          <input type="text" id="nda-other" placeholder="Describe your purpose">
+
+        <!-- STEP 4: SIGNATURE -->
+        <div class="nda-section-title">4. Digital Signature</div>
+        <div class="sig-wrapper">
+          <label>Sign below with your mouse or finger <span style="color:var(--danger);">*</span></label>
+          <div class="sig-canvas-box" id="sig-box">
+            <canvas id="sig-canvas" width="660" height="120"></canvas>
+            <button class="sig-clear" onclick="clearSignature()">Clear</button>
+            <div class="sig-placeholder" id="sig-placeholder">Draw your signature here</div>
+          </div>
         </div>
-      </div>
 
-      <div class="nda-section-title">Consent</div>
+        <!-- TIMER + SUBMIT -->
+        <div class="timer-bar" id="timer-bar">
+          Please review all terms carefully. Submit available in: <span class="countdown" id="countdown">45</span> seconds
+        </div>
 
-      <div class="nda-checkbox-row">
-        <input type="checkbox" id="nda-agree">
-        <label for="nda-agree">I have read, understood, and agree to the terms of this Non-Disclosure Agreement. I acknowledge that all information on this website is confidential and patent-protected.</label>
-      </div>
+        <div class="nda-error" id="nda-error"></div>
+        <div class="attempts-warning" id="attempts-warning"></div>
 
-      <div class="nda-checkbox-row">
-        <input type="checkbox" id="nda-noshare">
-        <label for="nda-noshare">I confirm that this access link was provided to me personally and I will NOT forward, share, or redistribute it to any third party.</label>
-      </div>
+        <button class="nda-submit" id="nda-submit" disabled onclick="submitNDA()">I Agree &mdash; Access Confidential Information</button>
 
-      <div class="nda-checkbox-row">
-        <input type="checkbox" id="nda-data">
-        <label for="nda-data">I consent to the collection and storage of my personal data (name, email, company, role) for the purpose of documenting NDA acceptance, in accordance with the EU General Data Protection Regulation (GDPR). Data will be stored for the duration of the NDA (5 years) and not shared with third parties.</label>
-      </div>
-
-      <div class="nda-checkbox-row">
-        <input type="checkbox" id="nda-nocompete">
-        <label for="nda-nocompete">I confirm that I will not use any information obtained through this website to develop, design, or market competing products or services, or to file competing patent applications.</label>
-      </div>
-
-      <div class="nda-error" id="nda-error">Please fill in all required fields and check all consent boxes.</div>
-
-      <button class="nda-submit" id="nda-submit" onclick="submitNDA()">I Agree &mdash; Access Confidential Information</button>
-
-      <div class="nda-footer-note">
-        This NDA is electronically binding. Your access key, IP address, timestamp, and submitted data will be logged.<br>
-        &copy; 2026 Bridger Systems &mdash; Anderson Alberto Rodriguez &mdash; Hamburg, Germany
+        <div class="nda-footer-note">
+          This NDA is electronically binding under German law (&sect; 126a BGB).<br>
+          Your access key, IP address, timestamp, signature, and all submitted data will be permanently logged.<br>
+          &copy; 2026 Bridger Systems &mdash; Anderson Alberto Rodriguez &mdash; Hamburg, Germany
+        </div>
       </div>
 
     </div>
   </div>
 </div>
 
-<!-- ===== SITE CONTENT (hidden until NDA accepted) ===== -->
+<!-- SITE CONTENT -->
 <div id="site-content">
 
-<!-- ACCESS BAR -->
 <div class="access-bar">
   Confidential &mdash; NDA Protected &mdash; Access granted to: <strong id="viewer-name">Authorized Viewer</strong> &mdash; <span id="viewer-key"></span>
 </div>
 
-<!-- HERO -->
 <div class="hero">
   <div class="hero-content">
     <h1>Bridger Systems</h1>
@@ -397,7 +470,6 @@
   </div>
 </div>
 
-<!-- PROBLEM / SOLUTION -->
 <section>
   <div class="container">
     <h2>The <span>Problem</span></h2>
@@ -415,7 +487,6 @@
   </div>
 </section>
 
-<!-- FEATURES -->
 <section class="features">
   <div class="container">
     <h2>Key <span>Features</span></h2>
@@ -423,7 +494,7 @@
       <div class="feature-card">
         <div class="feature-icon">&#128179;</div>
         <h3>Offline NFC Payments</h3>
-        <p>9-phase payment pipeline with anti-fraud system. Process contactless payments without internet. Transactions queue and sync when connectivity returns.</p>
+        <p>Multi-phase payment pipeline with anti-fraud system. Process contactless payments without internet. Transactions queue and sync when connectivity returns.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">&#127908;</div>
@@ -454,7 +525,6 @@
   </div>
 </section>
 
-<!-- TECH SPECS (LOCKED) -->
 <section class="locked-section">
   <div class="container">
     <h2>Technical <span>Architecture</span></h2>
@@ -467,86 +537,32 @@
   </div>
 </section>
 
-<!-- BUSINESS TIERS -->
 <section class="tiers">
   <div class="container">
     <h2>FoodFabrik <span>Ecosystem</span></h2>
     <p style="margin-bottom:24px;">From single food truck to festival marketplace &mdash; Bridger scales with your business.</p>
     <div class="tier-grid">
-      <div class="tier-card">
-        <h3>Starter</h3>
-        <div class="tier-target">1 Truck</div>
-        <ul>
-          <li>Bridger device</li>
-          <li>NFC payments</li>
-          <li>Basic analytics</li>
-          <li>Mobile dashboard</li>
-        </ul>
-      </div>
-      <div class="tier-card" style="border-color: var(--accent);">
-        <h3>Franchise</h3>
-        <div class="tier-target">5-50 Trucks</div>
-        <ul>
-          <li>Fleet management</li>
-          <li>VoiceBridge (2 languages)</li>
-          <li>BRG Token loyalty</li>
-          <li>Central dashboard</li>
-        </ul>
-      </div>
-      <div class="tier-card">
-        <h3>Festival</h3>
-        <div class="tier-target">30+ Vendors</div>
-        <ul>
-          <li>Multi-vendor system</li>
-          <li>All languages</li>
-          <li>Real-time analytics</li>
-          <li>Event management</li>
-        </ul>
-      </div>
-      <div class="tier-card">
-        <h3>Enterprise</h3>
-        <div class="tier-target">Unlimited</div>
-        <ul>
-          <li>White-label platform</li>
-          <li>Custom integrations</li>
-          <li>NFT certificates</li>
-          <li>Full API access</li>
-        </ul>
-      </div>
+      <div class="tier-card"><h3>Starter</h3><div class="tier-target">1 Truck</div><ul><li>Bridger device</li><li>NFC payments</li><li>Basic analytics</li><li>Mobile dashboard</li></ul></div>
+      <div class="tier-card" style="border-color:var(--accent);"><h3>Franchise</h3><div class="tier-target">5-50 Trucks</div><ul><li>Fleet management</li><li>VoiceBridge (2 languages)</li><li>BRG Token loyalty</li><li>Central dashboard</li></ul></div>
+      <div class="tier-card"><h3>Festival</h3><div class="tier-target">30+ Vendors</div><ul><li>Multi-vendor system</li><li>All languages</li><li>Real-time analytics</li><li>Event management</li></ul></div>
+      <div class="tier-card"><h3>Enterprise</h3><div class="tier-target">Unlimited</div><ul><li>White-label platform</li><li>Custom integrations</li><li>NFT certificates</li><li>Full API access</li></ul></div>
     </div>
   </div>
 </section>
 
-<!-- PATENT -->
 <section class="patent">
   <div class="container">
     <h2>Intellectual <span style="color:var(--accent2)">Property</span></h2>
-    <p style="opacity:.85; max-width:600px; margin:0 auto;">
-      Bridger's core technology is protected by a comprehensive patent application
-      filed with the German Patent and Trade Mark Office (DPMA).
-    </p>
+    <p style="opacity:.85; max-width:600px; margin:0 auto;">Bridger's core technology is protected by a comprehensive patent application filed with the German Patent and Trade Mark Office (DPMA).</p>
     <div class="patent-info">
-      <div class="patent-item">
-        <div class="label">Filing Date</div>
-        <div class="value">February 28, 2026</div>
-      </div>
-      <div class="patent-item">
-        <div class="label">Patent Office</div>
-        <div class="value">DPMA (Germany)</div>
-      </div>
-      <div class="patent-item">
-        <div class="label">Claims</div>
-        <div class="value">65 Claims, 7 Groups</div>
-      </div>
-      <div class="patent-item">
-        <div class="label">IPC Classes</div>
-        <div class="value">G06Q 20/32, 20/36, G06F 21/57</div>
-      </div>
+      <div class="patent-item"><div class="label">Filing Date</div><div class="value">February 28, 2026</div></div>
+      <div class="patent-item"><div class="label">Patent Office</div><div class="value">DPMA (Germany)</div></div>
+      <div class="patent-item"><div class="label">Claims</div><div class="value">65 Claims, 7 Groups</div></div>
+      <div class="patent-item"><div class="label">IPC Classes</div><div class="value">G06Q 20/32, 20/36, G06F 21/57</div></div>
     </div>
   </div>
 </section>
 
-<!-- CONTACT -->
 <section class="contact">
   <div class="container">
     <h2>Get in <span>Touch</span></h2>
@@ -554,54 +570,66 @@
     <div class="contact-info">
       <p><strong>Anderson Alberto Rodriguez</strong> &mdash; Founder &amp; Developer</p>
       <p>Hamburg, Germany</p>
-      <p>
-        <a href="mailto:anderson.a.rodriguez.r@gmail.com">anderson.a.rodriguez.r@gmail.com</a>
-      </p>
+      <p><a href="mailto:anderson.a.rodriguez.r@gmail.com">anderson.a.rodriguez.r@gmail.com</a></p>
     </div>
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <p>&copy; 2026 Bridger Systems &mdash; Hamburg, Germany. Patent Pending.</p>
   <p style="margin-top:6px;"><a href="mailto:anderson.a.rodriguez.r@gmail.com">Contact</a></p>
 </footer>
 
-</div><!-- end #site-content -->
+</div>
 
 <script>
-/*
- * ACCESS KEY SYSTEM
- * ==================
- * Valid keys are hashed and stored here. To generate a new invite link:
- *   https://montbello.github.io/bridger-sys/?key=KEYHERE
- *
- * Each key can only be used by ONE person (bound to browser on first NDA sign).
- * Keys expire after 30 days.
- */
-
-// Valid access keys: add new ones here as needed
-// Format: { key: 'plaintext', expires: 'YYYY-MM-DD', label: 'who it was sent to' }
-var VALID_KEYS = [
-  { key: 'BRG-FORIS-2026A',     expires: '2026-06-01', label: 'FORIS AG' },
-  { key: 'BRG-NIVAL-2026A',     expires: '2026-06-01', label: 'Nivalion AG' },
-  { key: 'BRG-OMNI-2026A',      expires: '2026-06-01', label: 'Omni Bridgeway' },
-  { key: 'BRG-EXIST-2026A',     expires: '2026-06-01', label: 'EXIST Review' },
-  { key: 'BRG-INNOR-2026A',     expires: '2026-06-01', label: 'InnoRampUp Hamburg' },
-  { key: 'BRG-INV01-2026A',     expires: '2026-06-01', label: 'Investor 1' },
-  { key: 'BRG-INV02-2026A',     expires: '2026-06-01', label: 'Investor 2' },
-  { key: 'BRG-INV03-2026A',     expires: '2026-06-01', label: 'Investor 3' },
-  { key: 'BRG-PART01-2026A',    expires: '2026-06-01', label: 'Partner 1' },
-  { key: 'BRG-PART02-2026A',    expires: '2026-06-01', label: 'Partner 2' },
-  { key: 'BRG-DEMO-2026',       expires: '2026-12-31', label: 'Demo / Owner' },
-  { key: 'BRG-ADMIN-MASTER',    expires: '2027-12-31', label: 'Admin' },
+// ======================================================
+// BLOCKED FREE EMAIL PROVIDERS (100+)
+// ======================================================
+var FREE_EMAILS = [
+  'gmail.com','googlemail.com','yahoo.com','yahoo.de','yahoo.co.uk','yahoo.fr',
+  'hotmail.com','hotmail.de','hotmail.co.uk','hotmail.fr','outlook.com','outlook.de',
+  'live.com','live.de','msn.com','aol.com','aol.de','icloud.com','me.com','mac.com',
+  'protonmail.com','protonmail.ch','proton.me','pm.me','tutanota.com','tutanota.de',
+  'tuta.io','gmx.de','gmx.net','gmx.com','gmx.at','gmx.ch','web.de','freenet.de',
+  'arcor.de','t-online.de','online.de','vodafone.de','1und1.de','mail.de','email.de',
+  'posteo.de','posteo.net','mailbox.org','yandex.com','yandex.ru','mail.ru','rambler.ru',
+  'zoho.com','fastmail.com','hushmail.com','startmail.com','runbox.com',
+  'guerrillamail.com','tempmail.com','throwaway.email','mailinator.com','sharklasers.com',
+  'guerrillamailblock.com','grr.la','yopmail.com','trashmail.com','dispostable.com',
+  'maildrop.cc','tempail.com','fakeinbox.com','10minutemail.com','temp-mail.org',
+  'mohmal.com','getnada.com','emailondeck.com','mintemail.com',
+  'orange.fr','laposte.net','sfr.fr','free.fr','wanadoo.fr','bluewin.ch',
+  'sky.com','btinternet.com','virginmedia.com','talktalk.net',
+  'comcast.net','verizon.net','att.net','sbcglobal.net','cox.net','charter.net',
+  'earthlink.net','optonline.net','frontier.com','windstream.net',
+  'seznam.cz','wp.pl','onet.pl','o2.pl','interia.pl',
+  'libero.it','virgilio.it','alice.it','tin.it','tiscali.it',
+  'rediffmail.com','163.com','126.com','qq.com','sina.com','sohu.com',
+  'naver.com','daum.net','hanmail.net'
 ];
 
-// Get key from URL
+// ======================================================
+// ACCESS KEY SYSTEM
+// ======================================================
+var VALID_KEYS = [
+  { key: 'BRG-FORIS-2026A', expires: '2026-06-01', label: 'FORIS AG' },
+  { key: 'BRG-NIVAL-2026A', expires: '2026-06-01', label: 'Nivalion AG' },
+  { key: 'BRG-OMNI-2026A', expires: '2026-06-01', label: 'Omni Bridgeway' },
+  { key: 'BRG-EXIST-2026A', expires: '2026-06-01', label: 'EXIST Review' },
+  { key: 'BRG-INNOR-2026A', expires: '2026-06-01', label: 'InnoRampUp Hamburg' },
+  { key: 'BRG-INV01-2026A', expires: '2026-06-01', label: 'Investor 1' },
+  { key: 'BRG-INV02-2026A', expires: '2026-06-01', label: 'Investor 2' },
+  { key: 'BRG-INV03-2026A', expires: '2026-06-01', label: 'Investor 3' },
+  { key: 'BRG-PART01-2026A', expires: '2026-06-01', label: 'Partner 1' },
+  { key: 'BRG-PART02-2026A', expires: '2026-06-01', label: 'Partner 2' },
+  { key: 'BRG-DEMO-2026', expires: '2026-12-31', label: 'Demo / Owner' },
+  { key: 'BRG-ADMIN-MASTER', expires: '2027-12-31', label: 'Admin' },
+];
+
 var urlParams = new URLSearchParams(window.location.search);
 var accessKey = urlParams.get('key');
 
-// Anti-sharing: strip key from URL bar after reading (so it can't be copied from address bar)
 if (accessKey && window.history.replaceState) {
   window.history.replaceState({}, document.title, window.location.pathname);
 }
@@ -610,17 +638,11 @@ function validateKey(key) {
   if (!key) return null;
   for (var i = 0; i < VALID_KEYS.length; i++) {
     if (VALID_KEYS[i].key === key) {
-      // Check expiry
       if (new Date(VALID_KEYS[i].expires) < new Date()) return null;
-
-      // Check if key already used by someone else
       var boundTo = localStorage.getItem('bridger_key_' + key);
       if (boundTo) {
-        // Key was used before - check if it's the same browser
-        var currentFingerprint = navigator.userAgent + screen.width + screen.height;
-        if (boundTo !== currentFingerprint) {
-          return null; // Different browser/device = blocked
-        }
+        var fp = getFingerprint();
+        if (boundTo !== fp) return null;
       }
       return VALID_KEYS[i];
     }
@@ -628,27 +650,28 @@ function validateKey(key) {
   return null;
 }
 
-// Also check if user already has a valid session from a previous key
-var storedKey = sessionStorage.getItem('bridger_access_key');
-if (!accessKey && storedKey) {
-  accessKey = storedKey;
+function getFingerprint() {
+  var c = document.createElement('canvas');
+  var ctx = c.getContext('2d');
+  ctx.textBaseline = 'top';
+  ctx.font = '14px Arial';
+  ctx.fillText('BRG-FP', 2, 2);
+  return c.toDataURL() + '|' + navigator.userAgent + '|' + screen.width + 'x' + screen.height +
+         '|' + navigator.language + '|' + new Date().getTimezoneOffset();
 }
+
+var storedKey = sessionStorage.getItem('bridger_access_key');
+if (!accessKey && storedKey) accessKey = storedKey;
 
 var keyInfo = validateKey(accessKey);
 
 if (!keyInfo) {
-  // No valid key: show access denied
   document.getElementById('access-denied').classList.remove('hidden');
   document.getElementById('nda-gate').classList.add('hidden');
 } else {
-  // Valid key: store it and check NDA status
   sessionStorage.setItem('bridger_access_key', accessKey);
+  localStorage.setItem('bridger_key_' + accessKey, getFingerprint());
 
-  // Bind key to this browser
-  var fingerprint = navigator.userAgent + screen.width + screen.height;
-  localStorage.setItem('bridger_key_' + accessKey, fingerprint);
-
-  // Check if NDA already signed for this key
   var ndaSigned = localStorage.getItem('bridger_nda_signed_' + accessKey);
   if (ndaSigned) {
     var ndaData = JSON.parse(ndaSigned);
@@ -658,104 +681,409 @@ if (!keyInfo) {
     document.getElementById('viewer-name').textContent = ndaData.name;
     document.getElementById('viewer-key').textContent = 'Key: ' + accessKey.substring(0, 8) + '...';
   } else {
-    // Show NDA gate
     document.getElementById('nda-gate').classList.remove('hidden');
     document.getElementById('access-denied').classList.add('hidden');
   }
 }
 
-// Show/hide "Other" field
+// ======================================================
+// NDA SCROLL CHECK — must scroll to bottom
+// ======================================================
+var ndaScrolled = false;
+var ndaTextBox = document.getElementById('nda-text-box');
+ndaTextBox.addEventListener('scroll', function() {
+  if (ndaTextBox.scrollTop + ndaTextBox.clientHeight >= ndaTextBox.scrollHeight - 20) {
+    ndaScrolled = true;
+    document.getElementById('scroll-hint').textContent = 'NDA fully read. You may now proceed.';
+    document.getElementById('scroll-hint').classList.add('done');
+    document.getElementById('form-section').style.opacity = '1';
+    document.getElementById('form-section').style.pointerEvents = 'auto';
+  }
+});
+
+// ======================================================
+// COUNTDOWN TIMER — 45 seconds before submit enabled
+// ======================================================
+var pageLoadTime = Date.now();
+var REQUIRED_SECONDS = 45;
+var timerInterval = setInterval(function() {
+  var elapsed = Math.floor((Date.now() - pageLoadTime) / 1000);
+  var remaining = REQUIRED_SECONDS - elapsed;
+  var el = document.getElementById('countdown');
+  if (remaining > 0) {
+    el.textContent = remaining;
+  } else {
+    el.textContent = '0';
+    document.getElementById('timer-bar').innerHTML = 'Review time complete. You may now submit.';
+    document.getElementById('timer-bar').style.background = '#e6f9ee';
+    document.getElementById('timer-bar').style.color = '#1a7a3a';
+    clearInterval(timerInterval);
+    checkSubmitReady();
+  }
+}, 1000);
+
+function checkSubmitReady() {
+  var elapsed = Math.floor((Date.now() - pageLoadTime) / 1000);
+  var btn = document.getElementById('nda-submit');
+  if (elapsed >= REQUIRED_SECONDS && ndaScrolled) {
+    btn.disabled = false;
+    btn.style.background = '';
+  }
+}
+
+// ======================================================
+// SIGNATURE PAD
+// ======================================================
+var canvas = document.getElementById('sig-canvas');
+var ctx = canvas.getContext('2d');
+var drawing = false;
+var hasSigned = false;
+
+function resizeCanvas() {
+  var box = document.getElementById('sig-box');
+  canvas.width = box.clientWidth;
+  canvas.height = 120;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+canvas.addEventListener('mousedown', function(e) { startDraw(e.offsetX, e.offsetY); });
+canvas.addEventListener('mousemove', function(e) { if (drawing) draw(e.offsetX, e.offsetY); });
+canvas.addEventListener('mouseup', stopDraw);
+canvas.addEventListener('mouseleave', stopDraw);
+
+canvas.addEventListener('touchstart', function(e) {
+  e.preventDefault();
+  var r = canvas.getBoundingClientRect();
+  var t = e.touches[0];
+  startDraw(t.clientX - r.left, t.clientY - r.top);
+});
+canvas.addEventListener('touchmove', function(e) {
+  e.preventDefault();
+  if (!drawing) return;
+  var r = canvas.getBoundingClientRect();
+  var t = e.touches[0];
+  draw(t.clientX - r.left, t.clientY - r.top);
+});
+canvas.addEventListener('touchend', stopDraw);
+
+function startDraw(x, y) {
+  drawing = true;
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.strokeStyle = '#1a1a2e';
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+  document.getElementById('sig-placeholder').style.display = 'none';
+}
+
+function draw(x, y) {
+  ctx.lineTo(x, y);
+  ctx.stroke();
+  hasSigned = true;
+}
+
+function stopDraw() { drawing = false; }
+
+function clearSignature() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  hasSigned = false;
+  document.getElementById('sig-placeholder').style.display = 'block';
+}
+
+function getSignatureData() {
+  return hasSigned ? canvas.toDataURL('image/png') : null;
+}
+
+// Check signature has enough ink (not just a dot)
+function isSignatureValid() {
+  if (!hasSigned) return false;
+  var data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+  var filledPixels = 0;
+  for (var i = 3; i < data.length; i += 4) {
+    if (data[i] > 0) filledPixels++;
+  }
+  return filledPixels > 150; // Minimum ink threshold
+}
+
+// ======================================================
+// PURPOSE DROPDOWN
+// ======================================================
 document.getElementById('nda-purpose').addEventListener('change', function() {
   document.getElementById('nda-other-row').style.display = this.value === 'other' ? 'block' : 'none';
 });
 
-// Disable right-click and common copy shortcuts
+// ======================================================
+// ANTI-COPY / ANTI-SHARE MEASURES
+// ======================================================
 document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
 document.addEventListener('keydown', function(e) {
-  // Block Ctrl+U (view source), Ctrl+S (save), Ctrl+P (print)
-  if (e.ctrlKey && (e.key === 'u' || e.key === 's' || e.key === 'p')) {
-    e.preventDefault();
-  }
-  // Block F12 (dev tools)
-  if (e.key === 'F12') {
-    e.preventDefault();
-  }
-  // Block Ctrl+Shift+I (dev tools)
-  if (e.ctrlKey && e.shiftKey && e.key === 'I') {
-    e.preventDefault();
-  }
+  if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S' || e.key === 'p' || e.key === 'P')) e.preventDefault();
+  if (e.key === 'F12') e.preventDefault();
+  if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) e.preventDefault();
 });
-
-// Disable text selection on the page (except form inputs)
 document.addEventListener('selectstart', function(e) {
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+  if (['INPUT','TEXTAREA','SELECT'].indexOf(e.target.tagName) >= 0) return;
   e.preventDefault();
 });
-
-// Disable drag
 document.addEventListener('dragstart', function(e) { e.preventDefault(); });
+document.addEventListener('copy', function(e) { e.preventDefault(); });
+
+// Detect DevTools open (basic)
+var devToolsOpen = false;
+setInterval(function() {
+  var threshold = 160;
+  if (window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold) {
+    if (!devToolsOpen) {
+      devToolsOpen = true;
+      console.log('%cWARNING: This page is NDA-protected. Inspecting or copying content is a breach of the Non-Disclosure Agreement and may result in legal action.',
+        'color:red;font-size:18px;font-weight:bold;');
+    }
+  }
+}, 1000);
+
+// ======================================================
+// FAILED ATTEMPTS TRACKING
+// ======================================================
+var failedAttempts = parseInt(sessionStorage.getItem('bridger_nda_fails') || '0');
+var MAX_ATTEMPTS = 5;
+
+// ======================================================
+// IP ADDRESS CAPTURE
+// ======================================================
+var visitorIP = 'unknown';
+try {
+  fetch('https://api.ipify.org?format=json')
+    .then(function(r) { return r.json(); })
+    .then(function(d) { visitorIP = d.ip; })
+    .catch(function() {});
+} catch(e) {}
+
+// ======================================================
+// VALIDATION + SUBMIT
+// ======================================================
+function showFieldError(id, msg) {
+  var el = document.getElementById(id);
+  if (el) { el.textContent = msg; el.style.display = 'block'; }
+}
+function hideFieldError(id) {
+  var el = document.getElementById(id);
+  if (el) el.style.display = 'none';
+}
 
 function submitNDA() {
+  // Check lockout
+  if (failedAttempts >= MAX_ATTEMPTS) {
+    document.getElementById('attempts-warning').style.display = 'block';
+    document.getElementById('attempts-warning').textContent = 'Too many failed attempts. Access locked. Please contact anderson.a.rodriguez.r@gmail.com';
+    return;
+  }
+
+  // Check honeypot
+  if (document.getElementById('nda-hp').value !== '') {
+    failedAttempts = MAX_ATTEMPTS;
+    sessionStorage.setItem('bridger_nda_fails', failedAttempts);
+    return;
+  }
+
+  // Check timer
+  var elapsed = Math.floor((Date.now() - pageLoadTime) / 1000);
+  if (elapsed < REQUIRED_SECONDS) {
+    showError('Please wait ' + (REQUIRED_SECONDS - elapsed) + ' more seconds before submitting.');
+    return;
+  }
+
+  // Check NDA scrolled
+  if (!ndaScrolled) {
+    showError('You must scroll to the bottom of the NDA text before submitting.');
+    return;
+  }
+
+  var valid = true;
+  var errors = [];
+
+  // Clear all
+  ['err-name','err-email','err-company','err-website','err-role','err-phone','err-other'].forEach(hideFieldError);
+  ['nda-name','nda-email','nda-company','nda-website','nda-role','nda-phone','nda-purpose'].forEach(function(id) {
+    document.getElementById(id).classList.remove('invalid');
+    document.getElementById(id).classList.remove('valid');
+  });
+
+  // NAME: min 2 words, each 2+ chars, no numbers
   var name = document.getElementById('nda-name').value.trim();
-  var email = document.getElementById('nda-email').value.trim();
+  var nameParts = name.split(/\s+/).filter(function(p) { return p.length >= 2; });
+  if (nameParts.length < 2) {
+    document.getElementById('nda-name').classList.add('invalid');
+    showFieldError('err-name', 'Enter your full legal name (first and last, min. 2 words)');
+    valid = false;
+  } else if (/\d/.test(name)) {
+    document.getElementById('nda-name').classList.add('invalid');
+    showFieldError('err-name', 'Name cannot contain numbers');
+    valid = false;
+  } else {
+    document.getElementById('nda-name').classList.add('valid');
+  }
+
+  // EMAIL: must be business email, not free provider
+  var email = document.getElementById('nda-email').value.trim().toLowerCase();
+  var emailRegex = /^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$/;
+  if (!emailRegex.test(email)) {
+    document.getElementById('nda-email').classList.add('invalid');
+    showFieldError('err-email', 'Enter a valid email address');
+    valid = false;
+  } else {
+    var emailDomain = email.split('@')[1];
+    if (FREE_EMAILS.indexOf(emailDomain) >= 0) {
+      document.getElementById('nda-email').classList.add('invalid');
+      showFieldError('err-email', 'Personal email not accepted. Please use your company email (@yourcompany.com)');
+      valid = false;
+    } else {
+      document.getElementById('nda-email').classList.add('valid');
+    }
+  }
+
+  // COMPANY: min 3 chars
   var company = document.getElementById('nda-company').value.trim();
+  if (company.length < 3) {
+    document.getElementById('nda-company').classList.add('invalid');
+    showFieldError('err-company', 'Enter your registered company name (min. 3 characters)');
+    valid = false;
+  } else {
+    document.getElementById('nda-company').classList.add('valid');
+  }
+
+  // WEBSITE: must be valid URL, domain should relate to email
+  var website = document.getElementById('nda-website').value.trim().toLowerCase();
+  if (!website.match(/^https?:\/\/.+\..+/)) {
+    if (website.match(/^[a-z0-9\-]+\.[a-z]{2,}/)) {
+      website = 'https://' + website;
+      document.getElementById('nda-website').value = website;
+    } else {
+      document.getElementById('nda-website').classList.add('invalid');
+      showFieldError('err-website', 'Enter a valid company website URL (e.g. https://yourcompany.com)');
+      valid = false;
+    }
+  }
+  if (valid && email && website) {
+    // Cross-check: email domain should be related to website domain
+    var emailDom = email.split('@')[1];
+    var urlDom = '';
+    try { urlDom = new URL(website).hostname.replace(/^www\./, ''); } catch(e) {}
+    if (urlDom && emailDom && emailDom !== urlDom) {
+      // Allow subdomains (e.g. mail.company.com email with company.com website)
+      if (!emailDom.endsWith('.' + urlDom) && !urlDom.endsWith('.' + emailDom)) {
+        document.getElementById('nda-website').classList.add('invalid');
+        showFieldError('err-website', 'Email domain (' + emailDom + ') does not match website (' + urlDom + '). Use your company email.');
+        valid = false;
+      }
+    }
+    if (!document.getElementById('nda-website').classList.contains('invalid')) {
+      document.getElementById('nda-website').classList.add('valid');
+    }
+  }
+
+  // ROLE: min 3 chars
   var role = document.getElementById('nda-role').value.trim();
+  if (role.length < 3) {
+    document.getElementById('nda-role').classList.add('invalid');
+    showFieldError('err-role', 'Enter your job title (min. 3 characters)');
+    valid = false;
+  } else {
+    document.getElementById('nda-role').classList.add('valid');
+  }
+
+  // PHONE: international format
+  var phone = document.getElementById('nda-phone').value.trim();
+  var phoneClean = phone.replace(/[\s\-\(\)\.]/g, '');
+  if (!phoneClean.match(/^\+?\d{8,15}$/)) {
+    document.getElementById('nda-phone').classList.add('invalid');
+    showFieldError('err-phone', 'Enter a valid phone number with country code (e.g. +49 xxx xxxxxxxx)');
+    valid = false;
+  } else if (!phoneClean.startsWith('+')) {
+    document.getElementById('nda-phone').classList.add('invalid');
+    showFieldError('err-phone', 'Phone must start with country code (e.g. +49, +41, +1)');
+    valid = false;
+  } else {
+    document.getElementById('nda-phone').classList.add('valid');
+  }
+
+  // PURPOSE
   var purpose = document.getElementById('nda-purpose').value;
-  var otherPurpose = document.getElementById('nda-other').value.trim();
+  if (!purpose) {
+    document.getElementById('nda-purpose').classList.add('invalid');
+    valid = false;
+  }
+  if (purpose === 'other') {
+    var otherText = document.getElementById('nda-other').value.trim();
+    if (otherText.length < 20) {
+      document.getElementById('nda-other').classList.add('invalid');
+      showFieldError('err-other', 'Please describe in detail (min. 20 characters)');
+      valid = false;
+    }
+  }
+
+  // CHECKBOXES
   var agree = document.getElementById('nda-agree').checked;
   var noshare = document.getElementById('nda-noshare').checked;
   var dataConsent = document.getElementById('nda-data').checked;
   var nocompete = document.getElementById('nda-nocompete').checked;
-
-  // Reset
-  var fields = ['nda-name','nda-email','nda-company','nda-role','nda-purpose'];
-  fields.forEach(function(id) { document.getElementById(id).classList.remove('invalid'); });
-
-  var valid = true;
-  var errorMsg = '';
-
-  if (!name) { document.getElementById('nda-name').classList.add('invalid'); valid = false; }
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { document.getElementById('nda-email').classList.add('invalid'); valid = false; }
-  if (!company) { document.getElementById('nda-company').classList.add('invalid'); valid = false; }
-  if (!role) { document.getElementById('nda-role').classList.add('invalid'); valid = false; }
-  if (!purpose) { document.getElementById('nda-purpose').classList.add('invalid'); valid = false; }
-  if (purpose === 'other' && !otherPurpose) { document.getElementById('nda-other').classList.add('invalid'); valid = false; }
-
   if (!agree || !noshare || !dataConsent || !nocompete) {
+    showError('You must accept ALL four consent boxes to proceed.');
     valid = false;
-    errorMsg = 'You must accept all four consent boxes to proceed.';
+  }
+
+  // SIGNATURE
+  if (!isSignatureValid()) {
+    document.getElementById('sig-box').classList.add('invalid');
+    showError('Please provide a valid signature (not just a dot).');
+    valid = false;
+  } else {
+    document.getElementById('sig-box').classList.remove('invalid');
   }
 
   if (!valid) {
-    var errEl = document.getElementById('nda-error');
-    errEl.textContent = errorMsg || 'Please fill in all required fields.';
-    errEl.style.display = 'block';
+    failedAttempts++;
+    sessionStorage.setItem('bridger_nda_fails', failedAttempts);
+    if (failedAttempts >= 3) {
+      document.getElementById('attempts-warning').style.display = 'block';
+      document.getElementById('attempts-warning').textContent = 'Warning: ' + failedAttempts + '/' + MAX_ATTEMPTS + ' failed attempts. After ' + MAX_ATTEMPTS + ' attempts, access will be locked.';
+    }
+    if (!document.getElementById('nda-error').textContent) {
+      showError('Please correct the highlighted fields.');
+    }
     return;
   }
 
+  // SUCCESS — build record
   var currentKey = sessionStorage.getItem('bridger_access_key') || accessKey;
-
-  // Build record
   var record = {
     name: name,
     email: email,
     company: company,
+    website: website,
     role: role,
-    purpose: purpose === 'other' ? 'Other: ' + otherPurpose : purpose,
+    phone: phone,
+    purpose: purpose === 'other' ? 'Other: ' + document.getElementById('nda-other').value.trim() : purpose,
     accessKey: currentKey,
+    keyLabel: keyInfo ? keyInfo.label : 'unknown',
+    ip: visitorIP,
+    signature: getSignatureData(),
+    fingerprint: getFingerprint().substring(0, 100),
     timestamp: new Date().toISOString(),
-    userAgent: navigator.userAgent
+    userAgent: navigator.userAgent,
+    screenRes: screen.width + 'x' + screen.height,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    language: navigator.language,
+    timeOnPage: Math.floor((Date.now() - pageLoadTime) / 1000) + 's'
   };
 
-  // Store NDA signed for this key
+  // Store
   localStorage.setItem('bridger_nda_signed_' + currentKey, JSON.stringify(record));
-
-  // Also store in general log
   var ndaLog = JSON.parse(localStorage.getItem('bridger_nda_log') || '[]');
   ndaLog.push(record);
   localStorage.setItem('bridger_nda_log', JSON.stringify(ndaLog));
 
-  // Send notification
+  // Notify
   sendNDANotification(record);
 
   // Grant access
@@ -765,23 +1093,39 @@ function submitNDA() {
   document.getElementById('viewer-key').textContent = 'Key: ' + currentKey.substring(0, 8) + '...';
 }
 
+function showError(msg) {
+  var el = document.getElementById('nda-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
 function sendNDANotification(record) {
+  var summary = {
+    _subject: 'NDA SIGNED [' + record.accessKey + '] - ' + record.name + ' - ' + record.company,
+    name: record.name,
+    email: record.email,
+    company: record.company,
+    website: record.website,
+    role: record.role,
+    phone: record.phone,
+    purpose: record.purpose,
+    accessKey: record.accessKey,
+    keyLabel: record.keyLabel,
+    ip: record.ip,
+    timestamp: record.timestamp,
+    timezone: record.timezone,
+    timeOnPage: record.timeOnPage,
+    message: 'NDA signed by ' + record.name + ' (' + record.email + ') from ' + record.company +
+             ' [' + record.website + ']. Phone: ' + record.phone +
+             '. Key: ' + record.accessKey + ' (' + record.keyLabel + ')' +
+             '. IP: ' + record.ip + '. Purpose: ' + record.purpose +
+             '. Time on page: ' + record.timeOnPage
+  };
   try {
     fetch('https://formspree.io/f/anderson.a.rodriguez.r@gmail.com', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({
-        _subject: 'NDA Signed - Bridger Systems [' + record.accessKey + ']',
-        name: record.name,
-        email: record.email,
-        company: record.company,
-        role: record.role,
-        purpose: record.purpose,
-        accessKey: record.accessKey,
-        timestamp: record.timestamp,
-        message: 'NDA signed by ' + record.name + ' (' + record.email + ') from ' + record.company +
-                 '. Key: ' + record.accessKey + '. Purpose: ' + record.purpose
-      })
+      body: JSON.stringify(summary)
     }).catch(function() {});
   } catch(e) {}
 }
