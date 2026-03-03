@@ -214,8 +214,21 @@
   .locked-box .lock-icon { font-size: 3rem; margin-bottom: 16px; opacity: .5; }
   .locked-box h3 { color: var(--primary); font-size: 1.3rem; margin-bottom: 8px; }
   .locked-box p { color: #666; font-size: .95rem; max-width: 500px; margin: 0 auto 20px; }
-  .locked-box .request-btn { display: inline-block; background: var(--primary); color: white; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: .95rem; transition: transform .2s, box-shadow .2s; }
+  .locked-box .request-btn { display: inline-block; background: var(--primary); color: white; padding: 12px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: .95rem; transition: transform .2s, box-shadow .2s; border: none; cursor: pointer; }
   .locked-box .request-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(15,43,70,.3); }
+  .locked-box .request-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+  .request-form { max-width: 420px; margin: 20px auto 0; text-align: left; }
+  .request-form .rf-field { margin-bottom: 12px; }
+  .request-form label { display: block; font-size: .8rem; font-weight: 600; color: #555; margin-bottom: 4px; }
+  .request-form input, .request-form textarea {
+    width: 100%; padding: 9px 12px; border: 1px solid #ccd5e0; border-radius: 6px;
+    font-size: .9rem; font-family: inherit;
+  }
+  .request-form textarea { resize: vertical; min-height: 60px; }
+  .request-form input:focus, .request-form textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,180,216,.15); }
+  .request-status { margin-top: 12px; padding: 10px; border-radius: 6px; font-size: .85rem; text-align: center; display: none; }
+  .request-status.success { display: block; background: #e6f9ee; color: #1a7a3a; border: 1px solid #b5e8c3; }
+  .request-status.error { display: block; background: #fde; color: var(--danger); border: 1px solid #f5c2c7; }
 
   .tiers { background: var(--light); }
   .tier-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
@@ -263,7 +276,7 @@
     <p style="margin-top:16px; opacity:.5; font-size:.85rem;">This link is non-transferable and bound to a single recipient.</p>
     <div class="denied-contact">
       <p style="opacity:1; font-size:.9rem;">Request access from:</p>
-      <a href="mailto:anderson.a.rodriguez.r@gmail.com?subject=Bridger%20Systems%20-%20Access%20Request">anderson.a.rodriguez.r@gmail.com</a>
+      <a href="mailto:consulting.arod@gmail.com?subject=Bridger%20Systems%20-%20Access%20Request">consulting.arod@gmail.com</a>
     </div>
   </div>
 </div>
@@ -466,7 +479,7 @@
       <span class="badge">100% Offline Capable</span>
     </div>
     <br>
-    <a href="mailto:anderson.a.rodriguez.r@gmail.com?subject=Bridger%20Systems%20Inquiry" class="hero-cta">Get in Touch</a>
+    <a href="mailto:consulting.arod@gmail.com?subject=Bridger%20Systems%20Inquiry" class="hero-cta">Get in Touch</a>
   </div>
 </div>
 
@@ -531,8 +544,29 @@
     <div class="locked-box">
       <div class="lock-icon">&#128272;</div>
       <h3>Restricted Access</h3>
-      <p>Detailed technical specifications, hardware architecture, firmware stack, and security implementation details are available upon request after additional verification.</p>
-      <a href="mailto:anderson.a.rodriguez.r@gmail.com?subject=Bridger%20Systems%20-%20Request%20Technical%20Details&body=Hello%20Anderson%2C%0A%0AI%20have%20reviewed%20the%20Bridger%20Systems%20overview%20and%20would%20like%20to%20request%20access%20to%20the%20detailed%20technical%20architecture.%0A%0AMy%20details%3A%0AName%3A%20%0ACompany%3A%20%0APurpose%3A%20%0A%0ABest%20regards" class="request-btn">Request Technical Details</a>
+      <p>Detailed technical specifications, hardware architecture, firmware stack, and security implementation details require additional clearance. Submit a request below and we will review it within 24-48 hours.</p>
+
+      <div class="request-form" id="tech-request-form">
+        <div class="rf-field">
+          <label>Your Name</label>
+          <input type="text" id="req-name" placeholder="Pre-filled from NDA" readonly>
+        </div>
+        <div class="rf-field">
+          <label>Your Email</label>
+          <input type="email" id="req-email" placeholder="Pre-filled from NDA" readonly>
+        </div>
+        <div class="rf-field">
+          <label>Company</label>
+          <input type="text" id="req-company" placeholder="Pre-filled from NDA" readonly>
+        </div>
+        <div class="rf-field">
+          <label>Reason for Technical Access</label>
+          <textarea id="req-reason" placeholder="Describe why you need access to the detailed technical architecture (min. 30 characters)..."></textarea>
+        </div>
+        <button class="request-btn" id="req-submit-btn" onclick="submitTechRequest()">Submit Request for Technical Access</button>
+        <div class="request-status" id="req-status"></div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -570,14 +604,14 @@
     <div class="contact-info">
       <p><strong>Anderson Alberto Rodriguez</strong> &mdash; Founder &amp; Developer</p>
       <p>Hamburg, Germany</p>
-      <p><a href="mailto:anderson.a.rodriguez.r@gmail.com">anderson.a.rodriguez.r@gmail.com</a></p>
+      <p><a href="mailto:consulting.arod@gmail.com">consulting.arod@gmail.com</a></p>
     </div>
   </div>
 </section>
 
 <footer>
   <p>&copy; 2026 Bridger Systems &mdash; Hamburg, Germany. Patent Pending.</p>
-  <p style="margin-top:6px;"><a href="mailto:anderson.a.rodriguez.r@gmail.com">Contact</a></p>
+  <p style="margin-top:6px;"><a href="mailto:consulting.arod@gmail.com">Contact</a></p>
 </footer>
 
 </div>
@@ -680,6 +714,8 @@ if (!keyInfo) {
     document.getElementById('site-content').classList.add('visible');
     document.getElementById('viewer-name').textContent = ndaData.name;
     document.getElementById('viewer-key').textContent = 'Key: ' + accessKey.substring(0, 8) + '...';
+    // Pre-fill tech request form
+    prefillTechRequest(ndaData);
   } else {
     document.getElementById('nda-gate').classList.remove('hidden');
     document.getElementById('access-denied').classList.add('hidden');
@@ -875,7 +911,7 @@ function submitNDA() {
   // Check lockout
   if (failedAttempts >= MAX_ATTEMPTS) {
     document.getElementById('attempts-warning').style.display = 'block';
-    document.getElementById('attempts-warning').textContent = 'Too many failed attempts. Access locked. Please contact anderson.a.rodriguez.r@gmail.com';
+    document.getElementById('attempts-warning').textContent = 'Too many failed attempts. Access locked. Please contact consulting.arod@gmail.com';
     return;
   }
 
@@ -1091,6 +1127,9 @@ function submitNDA() {
   document.getElementById('site-content').classList.add('visible');
   document.getElementById('viewer-name').textContent = name;
   document.getElementById('viewer-key').textContent = 'Key: ' + currentKey.substring(0, 8) + '...';
+
+  // Pre-fill tech request form
+  prefillTechRequest(record);
 }
 
 function showError(msg) {
@@ -1122,12 +1161,152 @@ function sendNDANotification(record) {
              '. Time on page: ' + record.timeOnPage
   };
   try {
-    fetch('https://formspree.io/f/anderson.a.rodriguez.r@gmail.com', {
+    fetch('https://formspree.io/f/consulting.arod@gmail.com', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(summary)
     }).catch(function() {});
   } catch(e) {}
+}
+
+// ======================================================
+// TECH REQUEST FORM — Pre-fill + Submit + DB + Notification
+// ======================================================
+function prefillTechRequest(data) {
+  if (!data) return;
+  var nameEl = document.getElementById('req-name');
+  var emailEl = document.getElementById('req-email');
+  var companyEl = document.getElementById('req-company');
+  if (nameEl && data.name) nameEl.value = data.name;
+  if (emailEl && data.email) emailEl.value = data.email;
+  if (companyEl && data.company) companyEl.value = data.company;
+
+  // Check if already requested
+  var currentKey = sessionStorage.getItem('bridger_access_key') || accessKey;
+  var prevRequest = localStorage.getItem('bridger_tech_request_' + currentKey);
+  if (prevRequest) {
+    var prev = JSON.parse(prevRequest);
+    var statusEl = document.getElementById('req-status');
+    statusEl.className = 'request-status success';
+    statusEl.textContent = 'Your request was submitted on ' + new Date(prev.timestamp).toLocaleString() + '. Status: Pending review. You will receive a response at ' + prev.email + '.';
+    statusEl.style.display = 'block';
+    document.getElementById('req-submit-btn').disabled = true;
+    document.getElementById('req-submit-btn').textContent = 'Request Already Submitted';
+    document.getElementById('req-reason').value = prev.reason;
+    document.getElementById('req-reason').readOnly = true;
+  }
+}
+
+function submitTechRequest() {
+  var reason = document.getElementById('req-reason').value.trim();
+  var statusEl = document.getElementById('req-status');
+  var btn = document.getElementById('req-submit-btn');
+
+  if (reason.length < 30) {
+    statusEl.className = 'request-status error';
+    statusEl.textContent = 'Please provide a detailed reason (min. 30 characters). Current: ' + reason.length + ' characters.';
+    statusEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  var currentKey = sessionStorage.getItem('bridger_access_key') || accessKey || 'unknown';
+  var ndaData = {};
+  try { ndaData = JSON.parse(localStorage.getItem('bridger_nda_signed_' + currentKey) || '{}'); } catch(e) {}
+
+  var request = {
+    name: document.getElementById('req-name').value,
+    email: document.getElementById('req-email').value,
+    company: document.getElementById('req-company').value,
+    reason: reason,
+    accessKey: currentKey,
+    keyLabel: keyInfo ? keyInfo.label : 'unknown',
+    phone: ndaData.phone || '',
+    website: ndaData.website || '',
+    ip: visitorIP,
+    timestamp: new Date().toISOString(),
+    status: 'pending'
+  };
+
+  // Store in local DB
+  localStorage.setItem('bridger_tech_request_' + currentKey, JSON.stringify(request));
+
+  var techLog = JSON.parse(localStorage.getItem('bridger_tech_requests_all') || '[]');
+  techLog.push(request);
+  localStorage.setItem('bridger_tech_requests_all', JSON.stringify(techLog));
+
+  // Send notification to consulting.arod@gmail.com
+  var emailData = {
+    _subject: 'TECH ACCESS REQUEST - ' + request.name + ' (' + request.company + ') [' + currentKey + ']',
+    _replyto: request.email,
+    name: request.name,
+    email: request.email,
+    company: request.company,
+    website: request.website,
+    phone: request.phone,
+    reason: request.reason,
+    accessKey: currentKey,
+    keyLabel: request.keyLabel,
+    ip: request.ip,
+    timestamp: request.timestamp,
+    message: '== TECHNICAL ACCESS REQUEST ==\n\n' +
+             'From: ' + request.name + '\n' +
+             'Email: ' + request.email + '\n' +
+             'Company: ' + request.company + '\n' +
+             'Website: ' + request.website + '\n' +
+             'Phone: ' + request.phone + '\n' +
+             'Access Key: ' + currentKey + ' (' + request.keyLabel + ')\n' +
+             'IP: ' + request.ip + '\n\n' +
+             'REASON:\n' + request.reason + '\n\n' +
+             'Submitted: ' + request.timestamp + '\n\n' +
+             '---\nTo approve: Reply to this email with the technical details or a separate access link.\n' +
+             'To deny: Reply with denial reason.'
+  };
+
+  try {
+    fetch('https://formspree.io/f/consulting.arod@gmail.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(emailData)
+    }).then(function(response) {
+      if (response.ok) {
+        statusEl.className = 'request-status success';
+        statusEl.textContent = 'Request submitted successfully! You will receive a response at ' + request.email + ' within 24-48 hours.';
+        btn.textContent = 'Request Submitted';
+        document.getElementById('req-reason').readOnly = true;
+      } else {
+        // Fallback: open mailto
+        var mailtoUrl = 'mailto:consulting.arod@gmail.com?subject=' +
+          encodeURIComponent('Tech Access Request - ' + request.name + ' - ' + request.company) +
+          '&body=' + encodeURIComponent(
+            'Technical Access Request\n\n' +
+            'Name: ' + request.name + '\n' +
+            'Email: ' + request.email + '\n' +
+            'Company: ' + request.company + '\n' +
+            'Reason: ' + request.reason + '\n' +
+            'Access Key: ' + currentKey
+          );
+        window.location.href = mailtoUrl;
+        statusEl.className = 'request-status success';
+        statusEl.textContent = 'Your email client should open. If not, please email consulting.arod@gmail.com directly.';
+        btn.textContent = 'Request Sent';
+      }
+      statusEl.style.display = 'block';
+    }).catch(function() {
+      // Fallback mailto
+      window.location.href = 'mailto:consulting.arod@gmail.com?subject=' +
+        encodeURIComponent('Tech Access Request - ' + request.name) +
+        '&body=' + encodeURIComponent('Name: ' + request.name + '\nCompany: ' + request.company + '\nReason: ' + request.reason);
+      statusEl.className = 'request-status success';
+      statusEl.textContent = 'Email client opened. Please send the request to consulting.arod@gmail.com.';
+      statusEl.style.display = 'block';
+      btn.textContent = 'Request Sent';
+    });
+  } catch(e) {
+    window.location.href = 'mailto:consulting.arod@gmail.com?subject=Tech%20Access%20Request';
+  }
 }
 </script>
 
